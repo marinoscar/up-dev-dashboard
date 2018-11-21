@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Luval.Orm;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,13 +11,12 @@ namespace data_collector.Tasks
     {
         public void InsertItems(IEnumerable<object> items)
         {
-            var db = new Luval.Orm.Database(@"Server=.\SQLEXPRESS;Database=XOM-DASH;Trusted_Connection=True;", Luval.Orm.DatabaseProviderType.SqlServer);
-            var dbContext = new Luval.Orm.DbContext(db);
+            var dbContext = new Luval.Orm.DbContext(@"Server=.\SQLEXPRESS;Database=XOM-DASH;Trusted_Connection=True;");
             foreach (var item in items)
             {
                 dbContext.Add(item);
             }
-            dbContext.SaveChanges();
+            dbContext.SaveChanges() ;
         }
     }
 }

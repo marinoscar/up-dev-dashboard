@@ -59,7 +59,9 @@ namespace data_collector.Tasks
             {
                 DeveloperName = info.DeveloperName,
                 Date = info.Date,
-                File = info.FileName,
+                FileName = info.FileName,
+                ProcessName = info.ProcessName,
+                UtcCreatedOn = DateTime.UtcNow,
                 RuleNo = Convert.ToInt32(sheet.Cells[idx, 1].Value),
                 RuleName = Convert.ToString(sheet.Cells[idx, 2].Value),
                 Status = Convert.ToString(sheet.Cells[idx, 3].Value),
@@ -80,7 +82,7 @@ namespace data_collector.Tasks
         [Luval.Orm.DataAnnotations.AutoIncrement]
         public int Id { get; set; }
         public DateTime Date { get; set; }
-        public string File { get; set; }
+        public string FileName { get; set; }
         public string ProcessName { get; set; }
         public string DeveloperName { get; set; }
         public int RuleNo { get; set; }
