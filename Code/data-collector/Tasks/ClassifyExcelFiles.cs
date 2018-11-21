@@ -35,10 +35,16 @@ namespace data_collector.Tasks
                             fileData.Add(GetQAFileInformation(excelPack));
                             continue;
                         }
-                        if (IsPeerReview(excelPack))
+                        if (IsReviewType(excelPack, "peer"))
                         {
                             OnStatus("File {0} is Peer review", file.Name);
-                            GetPeerReviewInformation(excelPack);
+                            fileData.Add(GetReviewInfo(excelPack, "PeerReview"));
+                            continue;
+                        }
+                        if (IsReviewType(excelPack, "technical"))
+                        {
+                            OnStatus("File {0} is T.A review", file.Name);
+                            fileData.Add(GetReviewInfo(excelPack, "TAReview"));
                             continue;
                         }
                         fileData.Add(new InputInformation() { Type = "None", FileName = file.FullName });
@@ -61,15 +67,15 @@ namespace data_collector.Tasks
             };
         }
 
-        private bool IsPeerReview(ExcelPackage excelPack)
+        private bool IsReviewType(ExcelPackage excelPack, string keyword)
         {
             var nameCheck = excelPack.Workbook.Worksheets.Count == 1;
             if (!nameCheck) return false;
             var sheet = excelPack.Workbook.Worksheets[1];
-            return PeerReviewFindTitle(sheet);
+            return ReviewFindTitle(sheet, keyword);
         }
 
-        private InputInformation GetPeerReviewInformation(ExcelPackage excelPack)
+        private InputInformation GetReviewInfo(ExcelPackage excelPack, string type)
         {
             var sheet = excelPack.Workbook.Worksheets[1];
             return new InputInformation()
@@ -78,7 +84,7 @@ namespace data_collector.Tasks
                 DeveloperName = FindStringValue("Developer", sheet),
                 ProcessName = FindStringValue("Process Name", sheet),
                 ReviwerName = FindStringValue("Reviewer", sheet),
-                Type = "Peer Review",
+                Type = type,
                 Date = FinDateValue("Review date", sheet)
             };
         }
@@ -117,7 +123,7 @@ namespace data_collector.Tasks
             return string.Join(" ", text.Split(" ".ToCharArray()).Select(i => i.Trim()));
         }
 
-        private bool PeerReviewFindTitle(ExcelWorksheet sheet)
+        private bool ReviewFindTitle(ExcelWorksheet sheet, string keyword)
         {
             var text = "";
             for (int i = 0; i < 10; i++)
@@ -126,7 +132,7 @@ namespace data_collector.Tasks
                 if (string.IsNullOrWhiteSpace(text)) continue;
                 text = text.Trim().ToLowerInvariant();
                 var words = text.Split(" ".ToCharArray()).Select(w => w.Trim()).ToList();
-                if (words.Contains("peer") && words.Contains("review")) return true;
+                if (words.Contains(keyword.ToLowerInvariant()) && words.Contains("review")) return true;
             }
             return false;
         }
