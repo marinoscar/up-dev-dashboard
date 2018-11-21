@@ -58,6 +58,7 @@
     <Compile Include="DataTaskEventArgs.cs" />
     <Compile Include="DataTaskResult.cs" />
     <Compile Include="IDataTask.cs" />
+    <Compile Include="InputInformation.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tasks\ArchiveExcelFiles.cs" />
