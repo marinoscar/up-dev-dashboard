@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using data_collector.Models;
+using Newtonsoft.Json;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -11,31 +12,16 @@ using System.Threading.Tasks;
 
 namespace data_collector.Tasks
 {
-    public class ImportRulesResult : DataTaskBase
+    public class ImportRulesResult : ExcelBasedImporter
     {
         public override Dictionary<string, object> DoExecute(Dictionary<string, object> input)
         {
-            return DoExecute(Convert.ToString(input["fileName"]));
+            return DoExecute<QAItem>(Convert.ToString(input["fileName"]), "QAFile");
         }
 
-        public Dictionary<string, object> DoExecute(string fileName)
+        protected override List<TEntity> GetData<TEntity>(QAReviewInfo info)
         {
-            var helper = new SqlHelper();
-            var data = JsonConvert.DeserializeObject<List<QAReviewInfo>>(File.ReadAllText(fileName));
-            var items = data.Where(i => !string.IsNullOrWhiteSpace(i.Type) && i.Type == "QAFile").ToList();
-            var res = new List<QAItem>();
-            foreach (var item in items)
-            {
-                OnStatus("Importing data from {0}", item.FileName);
-                res.AddRange(GetData(item));
-            }
-            helper.InsertItems(res);
-            return new Dictionary<string, object>();
-        }
-
-        private IEnumerable<QAItem> GetData(QAReviewInfo info)
-        {
-            var res = new List<QAItem>();
+            var res = new List<TEntity>();
             var fileInfo = new FileInfo(info.FileName);
             using (var pack = new ExcelPackage(fileInfo))
             {
@@ -46,13 +32,16 @@ namespace data_collector.Tasks
                     {
                         var val = sheet.Cells[i, 1].Value;
                         if (val == null || string.IsNullOrWhiteSpace(Convert.ToString(val))) return res;
-                        res.Add(LoadFromSheet(sheet, i, info));
+                        res.Add((TEntity)Convert.ChangeType(LoadFromSheet(sheet, i, info), typeof(TEntity)));
                     }
                 }
             }
             return res;
         }
 
+        
+
+       
         private QAItem LoadFromSheet(ExcelWorksheet sheet, int idx, QAReviewInfo info)
         {
             return new QAItem()
@@ -69,28 +58,5 @@ namespace data_collector.Tasks
                 Criteria = Convert.ToString(sheet.Cells[idx, 5].Value),
             };
         }
-    }
-
-    [Table(Name = "Staging_RuleImport")]
-    public class QAItem
-    {
-        public QAItem()
-        {
-            UtcCreatedOn = DateTime.UtcNow;
-        }
-
-        [Luval.Orm.DataAnnotations.AutoIncrement]
-        public int Id { get; set; }
-        public DateTime Date { get; set; }
-        public string FileName { get; set; }
-        public string ProcessName { get; set; }
-        public string DeveloperName { get; set; }
-        public int RuleNo { get; set; }
-        public string RuleName { get; set; }
-        public string Status { get; set; }
-        public string Analysis { get; set; }
-        public string Criteria { get; set; }
-        public DateTime UtcCreatedOn { get; set; }
-
     }
 }

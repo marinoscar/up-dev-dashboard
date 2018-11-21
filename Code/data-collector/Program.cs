@@ -16,6 +16,9 @@ namespace data_collector
             var classify = new ClassifyExcelFiles();
             var importQA = new ImportRulesResult();
             var archive = new ArchiveExcelFiles();
+            var peerRev = new ImportReviewCheckList() { ImportType = "PeerReview" };
+            var taRev = new ImportReviewCheckList() { ImportType = "TAReview" };
+
             var jsonFileName = string.Format(@"C:\QA-Quality\Excel\output-{0}.json", DateTime.Today.ToString("yyyy-MM-dd"));
 
             ExecuteTask(deCompress, 
@@ -39,6 +42,14 @@ namespace data_collector
                     { "resultFile", jsonFileName }
                 });
             ExecuteTask(importQA,
+               new Dictionary<string, object> {
+                    { "fileName", jsonFileName }
+               });
+            ExecuteTask(peerRev,
+               new Dictionary<string, object> {
+                    { "fileName", jsonFileName }
+               });
+            ExecuteTask(taRev,
                new Dictionary<string, object> {
                     { "fileName", jsonFileName }
                });
