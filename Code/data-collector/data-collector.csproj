@@ -60,6 +60,7 @@
     <Compile Include="IDataTask.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tasks\ArchiveExcelFiles.cs" />
     <Compile Include="Tasks\ClassifyExcelFiles.cs" />
     <Compile Include="Tasks\CopyAllExcelFilesToDestination.cs" />
     <Compile Include="Tasks\DecompressFilesInFolder.cs" />

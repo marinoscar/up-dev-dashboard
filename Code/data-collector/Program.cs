@@ -14,21 +14,32 @@ namespace data_collector
             var deCompress = new DecompressFilesInFolder();
             var copyAll = new CopyAllExcelFilesToDestination();
             var classify = new ClassifyExcelFiles();
+            var archive = new ArchiveExcelFiles();
 
             ExecuteTask(deCompress, 
                 new Dictionary<string, object> {
-                    { "sourceFolder", @"C:\Users\oscar.marin\Desktop\TMP\TooTest" },
-                    { "outputFolder", @"C:\Users\oscar.marin\Desktop\TMP\ToolTestOuput" }
+                    { "sourceFolder", @"C:\QA-Quality\Source" },
+                    { "outputFolder", @"C:\QA-Quality\Decompressed" }
                 });
             ExecuteTask(copyAll,
                 new Dictionary<string, object> {
-                    { "sourceFolder", @"C:\Users\oscar.marin\Desktop\TMP\ToolTestOuput" },
-                    { "outputFolder", @"C:\Users\oscar.marin\Desktop\TMP\ExcelOutput" }
+                    { "sourceFolder", @"C:\QA-Quality\Source" },
+                    { "outputFolder", @"C:\QA-Quality\Excel" }
+                });
+            ExecuteTask(copyAll,
+                new Dictionary<string, object> {
+                    { "sourceFolder", @"C:\QA-Quality\Decompressed" },
+                    { "outputFolder", @"C:\QA-Quality\Excel" }
                 });
             ExecuteTask(classify,
                 new Dictionary<string, object> {
-                    { "sourceFolder", @"C:\Users\oscar.marin\Desktop\TMP\ToolTestOuput" },
-                    { "resultFile", @"C:\Users\oscar.marin\Desktop\TMP\ExcelOutput\output.json" }
+                    { "sourceFolder", @"C:\QA-Quality\Excel" },
+                    { "resultFile", string.Format(@"C:\QA-Quality\Excel\output-{0}.json", DateTime.Today.ToString("yyyy-MM-dd")) }
+                });
+            ExecuteTask(archive,
+                new Dictionary<string, object> {
+                    { "sourceFolder", @"C:\QA-Quality\Excel" },
+                    { "outputFolder", @"C:\QA-Quality\Archive" }
                 });
         }
 

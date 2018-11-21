@@ -60,7 +60,7 @@ namespace data_collector.Tasks
                     });
                 }
             }
-            var json = JsonConvert.SerializeObject(fileData);
+            var json = JsonConvert.SerializeObject(fileData, Formatting.Indented);
             File.WriteAllText(resultFile, json);
             return new Dictionary<string, object>() {
                 { "FileData", fileData }
