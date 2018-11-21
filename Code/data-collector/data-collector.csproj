@@ -70,5 +70,19 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Luval\Code\Luval.Common\Luval.Common.csproj">
+      <Project>{31df6c48-7a79-4530-a778-396deb5a8dea}</Project>
+      <Name>Luval.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Luval\Code\Luval.Orm\Luval.Orm.csproj">
+      <Project>{a20163b7-c57b-4780-af21-8cb688fc4288}</Project>
+      <Name>Luval.Orm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Luval\Luval.Reflection\Luval.Reflection.csproj">
+      <Project>{64e3dbca-2a1b-412c-811b-aafe8c69ada5}</Project>
+      <Name>Luval.Reflection</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

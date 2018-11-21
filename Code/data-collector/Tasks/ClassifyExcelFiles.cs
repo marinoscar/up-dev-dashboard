@@ -19,7 +19,7 @@ namespace data_collector.Tasks
 
         public Dictionary<string, object> DoExecute(string sourceFolder, string resultFile)
         {
-            var fileData = new List<InputInformation>();
+            var fileData = new List<QAReviewInfo>();
             var dirInfo = new DirectoryInfo(sourceFolder);
             var files = dirInfo.GetFiles("*.xlsx", SearchOption.AllDirectories);
             foreach (var file in files)
@@ -47,12 +47,12 @@ namespace data_collector.Tasks
                             fileData.Add(GetReviewInfo(excelPack, "TAReview"));
                             continue;
                         }
-                        fileData.Add(new InputInformation() { Type = "None", FileName = file.FullName });
+                        fileData.Add(new QAReviewInfo() { Type = "None", FileName = file.FullName });
                     }
                 }
                 catch (Exception ex)
                 {
-                    fileData.Add(new InputInformation()
+                    fileData.Add(new QAReviewInfo()
                     {
                         FileName = file.FullName,
                         Failed = true,
@@ -75,15 +75,15 @@ namespace data_collector.Tasks
             return ReviewFindTitle(sheet, keyword);
         }
 
-        private InputInformation GetReviewInfo(ExcelPackage excelPack, string type)
+        private QAReviewInfo GetReviewInfo(ExcelPackage excelPack, string type)
         {
             var sheet = excelPack.Workbook.Worksheets[1];
-            return new InputInformation()
+            return new QAReviewInfo()
             {
                 FileName = excelPack.File.FullName,
                 DeveloperName = FindStringValue("Developer", sheet),
                 ProcessName = FindStringValue("Process Name", sheet),
-                ReviwerName = FindStringValue("Reviewer", sheet),
+                ReviewerName = FindStringValue("Reviewer", sheet),
                 Type = type,
                 Date = FinDateValue("Review date", sheet)
             };
@@ -149,15 +149,15 @@ namespace data_collector.Tasks
             return nameCheck && valuecheck;
         }
 
-        private InputInformation GetQAFileInformation(ExcelPackage excelPack)
+        private QAReviewInfo GetQAFileInformation(ExcelPackage excelPack)
         {
             var file = excelPack.File;
-            return new InputInformation()
+            return new QAReviewInfo()
             {
                 ProcessName = GetQAProcessName(file.Name),
                 FileName = file.FullName,
                 DeveloperName = "NA",
-                ReviwerName = "NA",
+                ReviewerName = "NA",
                 Type = "QAFile",
                 Date = GetDate(file.Name),
             };
