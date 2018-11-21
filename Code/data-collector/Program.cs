@@ -14,7 +14,9 @@ namespace data_collector
             var deCompress = new DecompressFilesInFolder();
             var copyAll = new CopyAllExcelFilesToDestination();
             var classify = new ClassifyExcelFiles();
+            var importQA = new ImportRulesResult();
             var archive = new ArchiveExcelFiles();
+            var jsonFileName = string.Format(@"C:\QA-Quality\Excel\output-{0}.json", DateTime.Today.ToString("yyyy-MM-dd"));
 
             ExecuteTask(deCompress, 
                 new Dictionary<string, object> {
@@ -34,8 +36,12 @@ namespace data_collector
             ExecuteTask(classify,
                 new Dictionary<string, object> {
                     { "sourceFolder", @"C:\QA-Quality\Excel" },
-                    { "resultFile", string.Format(@"C:\QA-Quality\Excel\output-{0}.json", DateTime.Today.ToString("yyyy-MM-dd")) }
+                    { "resultFile", jsonFileName }
                 });
+            ExecuteTask(importQA,
+               new Dictionary<string, object> {
+                    { "fileName", jsonFileName }
+               });
             ExecuteTask(archive,
                 new Dictionary<string, object> {
                     { "sourceFolder", @"C:\QA-Quality\Excel" },
