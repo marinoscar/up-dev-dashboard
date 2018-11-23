@@ -9,9 +9,15 @@ namespace data_collector.Tasks
 {
     public class SqlHelper
     {
+        public Database GetDb()
+        {
+            return new Database(@"Server=.\SQLEXPRESS;Database=XOM-DASH;Trusted_Connection=True;");
+        }
+
+
         public void InsertItems(IEnumerable<object> items)
         {
-            var dbContext = new Luval.Orm.DbContext(@"Server=.\SQLEXPRESS;Database=XOM-DASH;Trusted_Connection=True;");
+            var dbContext = new DbContext(GetDb());
             foreach (var item in items)
             {
                 dbContext.Add(item);

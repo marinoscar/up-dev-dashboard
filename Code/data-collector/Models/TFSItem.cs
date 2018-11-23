@@ -1,13 +1,19 @@
-﻿using System;
+﻿using Luval.Orm.DataAnnotations;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Data.Linq.Mapping;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace data_collector.Models
 {
+    [Table(Name = "Staging_TFS")]
     public class TFSItem
     {
+        [AutoIncrement, Key]
+        public int RowId { get; set; }
         public long Id { get; set; }
         public string TeamProject { get; set; }
         public string AreaPath { get; set; }

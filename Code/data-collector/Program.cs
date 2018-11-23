@@ -16,8 +16,10 @@ namespace data_collector
             var classify = new ClassifyExcelFiles();
             var importQA = new ImportRulesResult();
             var archive = new ArchiveExcelFiles();
+            var clearStaging = new ClearStagingTables();
             var peerRev = new ImportReviewCheckList() { ImportType = "PeerReview" };
             var taRev = new ImportReviewCheckList() { ImportType = "TAReview" };
+            var tfsData = new ImportTFSData();
 
             var jsonFileName = string.Format(@"C:\QA-Quality\Excel\output-{0}.json", DateTime.Today.ToString("yyyy-MM-dd"));
 
@@ -41,6 +43,7 @@ namespace data_collector
                     { "sourceFolder", @"C:\QA-Quality\Excel" },
                     { "resultFile", jsonFileName }
                 });
+            ExecuteTask(clearStaging, new Dictionary<string, object>());
             ExecuteTask(importQA,
                new Dictionary<string, object> {
                     { "fileName", jsonFileName }
@@ -50,6 +53,10 @@ namespace data_collector
                     { "fileName", jsonFileName }
                });
             ExecuteTask(taRev,
+               new Dictionary<string, object> {
+                    { "fileName", jsonFileName }
+               });
+            ExecuteTask(tfsData,
                new Dictionary<string, object> {
                     { "fileName", jsonFileName }
                });

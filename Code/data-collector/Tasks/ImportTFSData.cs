@@ -33,12 +33,13 @@ namespace data_collector.Tasks
             var helper = new SqlHelper();
             var values = new List<TFSItem>();
             var sheet = excelPack.Workbook.Worksheets[1];
-            var row = 2;
+            var row = 3;
             long id = 99;
             while (id > 0)
             {
                 var item = LoadFromRoad(sheet, row);
-                values.Add(item);
+                if (item.Id > 0)
+                    values.Add(item);
                 id = item.Id;
                 row++;
             }
@@ -60,20 +61,20 @@ namespace data_collector.Tasks
                 BoardColumn = Convert.ToString(sheet.Cells[row, 16].Value),
                 BoardLane = Convert.ToString(sheet.Cells[row, 18].Value),
                 ChangedBy = Convert.ToString(sheet.Cells[row, 19].Value),
-                ChangedDate = ToDate(sheet.Cells[row, 21]),
-                ClosedDate = ToDate(sheet.Cells[row, 22]),
+                ChangedDate = ToDate(sheet.Cells[row, 21].Value),
+                ClosedDate = ToDate(sheet.Cells[row, 22].Value),
                 ClosingComments = Convert.ToString(sheet.Cells[row, 24].Value),
                 Description = Convert.ToString(sheet.Cells[row, 25].Value),
                 Effort = Convert.ToSingle(sheet.Cells[row, 26].Value),
-                FinishedDate = ToDate(sheet.Cells[row, 27]),
+                FinishedDate = ToDate(sheet.Cells[row, 27].Value),
                 Priority = Convert.ToString(sheet.Cells[row, 30].Value),
                 Reason = Convert.ToString(sheet.Cells[row, 31].Value),
                 RemainingWork = Convert.ToSingle(sheet.Cells[row, 32].Value),
                 ReproSteps = Convert.ToString(sheet.Cells[row, 33].Value),
                 Severity = Convert.ToString(sheet.Cells[row, 34].Value),
-                StartDate = ToDate(sheet.Cells[row, 35]),
+                StartDate = ToDate(sheet.Cells[row, 35].Value),
                 Resolution = Convert.ToString(sheet.Cells[row, 36].Value),
-                TargetDate = ToDate(sheet.Cells[row, 37]),
+                TargetDate = ToDate(sheet.Cells[row, 37].Value),
                 ItearationPath = Convert.ToString(sheet.Cells[row, 41].Value),
             };
         }
@@ -81,6 +82,11 @@ namespace data_collector.Tasks
         private DateTime? ToDate(object item)
         {
             if (item == null) return null;
+            if(item is DateTime) return Convert.ToDateTime(item);
+            if(item is double || item is float || item is decimal)
+            {
+                return DateTime.FromOADate(Convert.ToDouble(item));
+            }
             return Convert.ToDateTime(item);
         }
     }

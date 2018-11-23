@@ -76,7 +76,7 @@ namespace data_collector.Tasks
 
         private bool IsTFS(ExcelPackage excelPack)
         {
-            var singleSheet = excelPack.Workbook.Worksheets.Count == 1 && excelPack.Workbook.Worksheets[1].Name == "Sheet1";
+            var singleSheet = excelPack.Workbook.Worksheets.Count == 2 && excelPack.Workbook.Worksheets[1].Name == "Sheet1";
             if (!singleSheet) return false;
             var firstRow = Convert.ToString(excelPack.Workbook.Worksheets[1].Cells[1, 1].Value);
             var secondRow = Convert.ToString(excelPack.Workbook.Worksheets[1].Cells[2, 1].Value);
