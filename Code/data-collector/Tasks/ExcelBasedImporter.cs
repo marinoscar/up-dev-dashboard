@@ -19,7 +19,7 @@ namespace data_collector.Tasks
             var res = new List<TEntity>();
             foreach (var item in items)
             {
-                OnStatus("Importing {0} data from {1}", type, item.FileName);
+                OnStatus("Importing {0} data from {1}", type, item.FullFileName);
                 res.AddRange(GetData<TEntity>(item));
             }
             helper.InsertItems(res.Select(i => (object)i));

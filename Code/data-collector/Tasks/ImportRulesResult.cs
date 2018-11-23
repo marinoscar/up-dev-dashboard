@@ -22,7 +22,7 @@ namespace data_collector.Tasks
         protected override List<TEntity> GetData<TEntity>(QAReviewInfo info)
         {
             var res = new List<TEntity>();
-            var fileInfo = new FileInfo(info.FileName);
+            var fileInfo = new FileInfo(info.FullFileName);
             using (var pack = new ExcelPackage(fileInfo))
             {
                 using (var sheet = pack.Workbook.Worksheets[1])
@@ -48,7 +48,7 @@ namespace data_collector.Tasks
             {
                 DeveloperName = info.DeveloperName,
                 Date = info.Date,
-                FileName = info.FileName,
+                FileName = info.FullFileName,
                 ProcessName = info.ProcessName,
                 UtcCreatedOn = DateTime.UtcNow,
                 RuleNo = Convert.ToInt32(sheet.Cells[idx, 1].Value),

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -47,14 +48,20 @@ namespace data_collector.Tasks
                             fileData.Add(GetReviewInfo(excelPack, "TAReview"));
                             continue;
                         }
-                        fileData.Add(new QAReviewInfo() { Type = "None", FileName = file.FullName });
+                        if (IsTFS(excelPack))
+                        {
+                            OnStatus("File {0} is TFS", file.Name);
+                            fileData.Add(GetTFSInfo(excelPack));
+                            continue;
+                        }
+                        fileData.Add(new QAReviewInfo() { Type = "None", FullFileName = file.FullName });
                     }
                 }
                 catch (Exception ex)
                 {
                     fileData.Add(new QAReviewInfo()
                     {
-                        FileName = file.FullName,
+                        FullFileName = file.FullName,
                         Failed = true,
                         Message = ex.ToString()
                     });
@@ -67,6 +74,16 @@ namespace data_collector.Tasks
             };
         }
 
+        private bool IsTFS(ExcelPackage excelPack)
+        {
+            var singleSheet = excelPack.Workbook.Worksheets.Count == 1 && excelPack.Workbook.Worksheets[1].Name == "Sheet1";
+            if (!singleSheet) return false;
+            var firstRow = Convert.ToString(excelPack.Workbook.Worksheets[1].Cells[1, 1].Value);
+            var secondRow = Convert.ToString(excelPack.Workbook.Worksheets[1].Cells[2, 1].Value);
+            return !string.IsNullOrWhiteSpace(firstRow) && firstRow.ToLowerInvariant().StartsWith("project: fl") &&
+                !string.IsNullOrWhiteSpace(secondRow) && secondRow.ToLowerInvariant().StartsWith("id");
+        }
+
         private bool IsReviewType(ExcelPackage excelPack, string keyword)
         {
             var nameCheck = excelPack.Workbook.Worksheets.Count == 1;
@@ -75,12 +92,24 @@ namespace data_collector.Tasks
             return ReviewFindTitle(sheet, keyword);
         }
 
+        private QAReviewInfo GetTFSInfo(ExcelPackage excelPack)
+        {
+            var sheet = excelPack.Workbook.Worksheets[1];
+            return new QAReviewInfo(excelPack.File)
+            {
+                DeveloperName = "NA",
+                ProcessName = "NA",
+                ReviewerName = "NA",
+                Type = "TFS",
+                Date = DateTime.Today
+            };
+        }
+
         private QAReviewInfo GetReviewInfo(ExcelPackage excelPack, string type)
         {
             var sheet = excelPack.Workbook.Worksheets[1];
-            return new QAReviewInfo()
+            return new QAReviewInfo(excelPack.File)
             {
-                FileName = excelPack.File.FullName,
                 DeveloperName = FindStringValue("Developer", sheet),
                 ProcessName = FindStringValue("Process Name", sheet),
                 ReviewerName = FindStringValue("Reviewer", sheet),
@@ -88,6 +117,8 @@ namespace data_collector.Tasks
                 Date = FinDateValue("Review date", sheet)
             };
         }
+
+
 
         private string FindStringValue(string startWith, ExcelWorksheet sheet)
         {
@@ -152,10 +183,9 @@ namespace data_collector.Tasks
         private QAReviewInfo GetQAFileInformation(ExcelPackage excelPack)
         {
             var file = excelPack.File;
-            return new QAReviewInfo()
+            return new QAReviewInfo(excelPack.File)
             {
                 ProcessName = GetQAProcessName(file.Name),
-                FileName = file.FullName,
                 DeveloperName = "NA",
                 ReviewerName = "NA",
                 Type = "QAFile",
