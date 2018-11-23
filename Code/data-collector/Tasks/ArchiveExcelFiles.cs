@@ -18,8 +18,11 @@ namespace data_collector.Tasks
         {
             var dirInfo = new DirectoryInfo(outputFolder);
             if (!dirInfo.Exists) dirInfo.Create();
-            var fileName = string.Format("Archive-{0}.zip", DateTime.Today.ToString("yyyy-MM-dd"));
-            ZipFile.CreateFromDirectory(sourceFolder, Path.Combine(dirInfo.FullName, fileName));
+            var file = new 
+                FileInfo(Path.Combine(dirInfo.FullName, string.Format("Archive-{0}.zip", 
+                DateTime.Today.ToString("yyyy-MM-dd"))));
+            if (!file.Exists) file.Delete();
+            ZipFile.CreateFromDirectory(sourceFolder, file.FullName);
             return new Dictionary<string, object>();
         }
     }
