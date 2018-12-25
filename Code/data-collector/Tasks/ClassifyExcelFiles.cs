@@ -108,7 +108,7 @@ namespace data_collector.Tasks
         private QAReviewInfo GetReviewInfo(ExcelPackage excelPack, string type)
         {
             var sheet = excelPack.Workbook.Worksheets[1];
-            return new QAReviewInfo(excelPack.File)
+            var res = new QAReviewInfo(excelPack.File)
             {
                 DeveloperName = FindStringValue("Developer", sheet),
                 ProcessName = FindStringValue("Process Name", sheet),
@@ -116,6 +116,9 @@ namespace data_collector.Tasks
                 Type = type,
                 Date = FinDateValue("Review date", sheet)
             };
+            if (res.Date <= new DateTime(2000, 1, 1))
+                res.Date = File.GetLastWriteTime(excelPack.File.FullName);
+            return res;
         }
 
 

@@ -21,7 +21,7 @@ namespace data_collector.Tasks
             var file = new 
                 FileInfo(Path.Combine(dirInfo.FullName, string.Format("Archive-{0}.zip", 
                 DateTime.Today.ToString("yyyy-MM-dd"))));
-            if (!file.Exists) file.Delete();
+            if (file.Exists) file.Delete();
             ZipFile.CreateFromDirectory(sourceFolder, file.FullName);
             return new Dictionary<string, object>();
         }
